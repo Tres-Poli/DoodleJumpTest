@@ -5,4 +5,5 @@
     TrapPlatform = 2,
     Player = 3,
     StartPlatform = 4,
+    EndPlatform = 5,
 }

@@ -26,8 +26,6 @@ public class UIController : MonoBehaviour, IUICommunication
     {
         Instance = this;
 
-        _validationPopup.Hide(true);
-
         _uiPanels = new Dictionary<UIPanel, ICanvasGroupUI>();
         _uiPanels.Add(UIPanel.Menu, _menuPanel);
         _uiPanels.Add(UIPanel.Game, _gamePanel);
@@ -37,6 +35,7 @@ public class UIController : MonoBehaviour, IUICommunication
 
     private void Start()
     {
+        _validationPopup.Hide(true);
         _gameController = GameController.Instance;
         SwitchUI(UIPanel.Menu);
     }

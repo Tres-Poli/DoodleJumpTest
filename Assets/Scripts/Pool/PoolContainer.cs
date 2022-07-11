@@ -11,6 +11,8 @@ public sealed class PoolContainer : MonoBehaviour
     [SerializeField] Platform _platformPrefab;
     [SerializeField] MovingPlatform _movingPlatformPrefab;
     [SerializeField] TrapPlatform _trapPrefab;
+    [SerializeField] PlatformBase _startPlatform;
+    [SerializeField] PlatformBase _endPlatform;
 
     private Dictionary<GameEntityType, Stack<MonoBehaviour>> _pool;
     private Dictionary<GameEntityType, MonoBehaviour> _prefabs;
@@ -26,6 +28,8 @@ public sealed class PoolContainer : MonoBehaviour
         _prefabs.Add(GameEntityType.CommonPlatform, _platformPrefab);
         _prefabs.Add(GameEntityType.MovingPlatform, _movingPlatformPrefab);
         _prefabs.Add(GameEntityType.TrapPlatform, _trapPrefab);
+        _prefabs.Add(GameEntityType.StartPlatform, _startPlatform);
+        _prefabs.Add(GameEntityType.EndPlatform, _endPlatform);
     }
 
     public void Pool(GameEntityType type, MonoBehaviour obj)

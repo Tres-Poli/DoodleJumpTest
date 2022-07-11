@@ -40,6 +40,7 @@ public class PlayerController : MonoBehaviour, IMirrorable<PlayerInstance>
         _currScores = 0;
         _initialPosition = transform.position;
         _rb = GetComponent<Rigidbody2D>();
+        _rb.simulated = false;
         _primaryInstance = GetComponentInChildren<PlayerInstance>();
     }
 

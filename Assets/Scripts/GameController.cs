@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System.Collections;
+using UnityEngine;
 
 sealed class GameController : MonoBehaviour, IUICommunication
 {
@@ -40,13 +41,19 @@ sealed class GameController : MonoBehaviour, IUICommunication
         _platformContainer.enabled = enabled;
     }
 
+    private IEnumerator DelayedStart()
+    {
+        yield return new WaitForSeconds(0.2f);
+        _playerController.Pause(false);
+    }
+
     public void StartGame()
     {
         UpdateScores(0);
         SetGameScriptsEnabled(true);
-        _playerController.Hide(false);
-        _playerController.Pause(false);
         _platformContainer.InitPlatformGeneration();
+        _playerController.Hide(false);
+        StartCoroutine(DelayedStart());
     }
 
     public void PauseGame()

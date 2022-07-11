@@ -24,6 +24,9 @@ sealed class PlatformContainer : MonoBehaviour
     private List<IMovingPlatform> _movingPlatforms;
     private bool _trapGenerated;
     private float _initialSpawnPositionY;
+    private Vector3 _startPlatformPosition;
+    private PlatformBase _currStartPlatform;
+    private PlatformBase _currEndPlatform;
 
     public float LastSpawnPositionY { get; private set; }
 
@@ -37,10 +40,17 @@ sealed class PlatformContainer : MonoBehaviour
 
         _platforms = new ListQueue<PlatformBase>();
         _platforms.Enqueue(_startPlatform);
-        _startPlatform.Renderer.enabled = false;
+        _currStartPlatform = _startPlatform;
+        _currStartPlatform.Renderer.enabled = false;
+        _startPlatformPosition = _currStartPlatform.transform.position;
 
-        LastSpawnPositionY = _startPlatform.transform.position.y + _firstGeneratedPlatformOffsetY;
+        LastSpawnPositionY = _currStartPlatform.transform.position.y + _firstGeneratedPlatformOffsetY;
         _initialSpawnPositionY = LastSpawnPositionY;
+    }
+
+    private void Start()
+    {
+        GenerateEndPlatform();
     }
 
     private void Update()
@@ -97,7 +107,7 @@ sealed class PlatformContainer : MonoBehaviour
 
     public void InitPlatformGeneration()
     {
-        _startPlatform.Renderer.enabled = true;
+        _currStartPlatform.Renderer.enabled = true;
 
         for (int i = 0; i < _initialGeneratePlatformCount; i++)
         {
@@ -135,6 +145,21 @@ sealed class PlatformContainer : MonoBehaviour
         AddPlatform(obj);
     }
 
+    private void GenerateStartPlatform()
+    {
+        var startPlatform = PoolContainer.Instance.Get(GameEntityType.StartPlatform) as PlatformBase;
+        _platforms.Enqueue(startPlatform);
+        startPlatform.transform.position = _startPlatformPosition;
+        _currStartPlatform = startPlatform;
+    }
+
+    private void GenerateEndPlatform()
+    {
+        var endPlatform = PoolContainer.Instance.Get(GameEntityType.EndPlatform) as PlatformBase;
+        endPlatform.transform.position = new Vector3(0, GameController.Instance.LvlGoal - 1, transform.position.z);
+        _currEndPlatform = endPlatform;
+    }
+
     public void StopOverseePlatform(PlatformBase platform)
     {
         if (_platforms.Contains(platform))
@@ -155,12 +180,17 @@ sealed class PlatformContainer : MonoBehaviour
         _trapGenerated = true;
         LastSpawnPositionY = _initialSpawnPositionY;
 
-        _platforms.Enqueue(PoolContainer.Instance.Get(GameEntityType.StartPlatform) as PlatformBase);
+        GenerateStartPlatform();
+
+        if (_currEndPlatform == null)
+        {
+            GenerateEndPlatform();
+        }
     }
 
     public void Stop()
     {
         Restart();
-        _startPlatform.Renderer.enabled = false;
+        _currStartPlatform.Renderer.enabled = false;
     }
 }
